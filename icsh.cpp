@@ -31,7 +31,8 @@ string waitForInput()
     return inputLine;
 }
 
-deque<string> getArgumentQueue(string inputLine){
+deque<string> getArgumentQueue(string inputLine)
+{
     stringstream stream(inputLine);
     deque<string> argv((istream_iterator<string>(stream)), istream_iterator<string>());
     return argv;
@@ -61,6 +62,10 @@ void commandHandler(deque<string> commandQueue)
         if (commandQueue.size() > 1)
         {
             int exitCode = stoi(commandQueue[1]);
+            if (exitCode > 255)
+            {
+                exitCode = exitCode >> 8;
+            }
             cout << "Bye" << endl;
             exit(exitCode);
         }
@@ -72,6 +77,11 @@ void commandHandler(deque<string> commandQueue)
         cout << "Unknown Command!" << endl;
         return;
     }
+}
+
+void processScript(char *argv[])
+{
+    
 }
 
 int main(int argc, char *argv[])
