@@ -11,12 +11,15 @@
 #include <cerrno>
 #include <deque>
 #include <signal.h>
+#include <fstream>
 
 
 using namespace std;
 
 #define EXITCMD "exit"
 #define ECHOCMD "echo"
+
+string prevInput;
 
 string waitForInput()
 {
@@ -79,21 +82,37 @@ void commandHandler(deque<string> commandQueue)
     }
 }
 
+void processScript(string scriptLoc)
+{
+    ifstream infile(scriptLoc);
+    string line;
+    while (getline(infile, line))
+    {
+        cout << line << endl;
+    }
+}
+
 int main(int argc, char *argv[])
 {
-    string prevInput;
-    string inputLine;
-    while(true)
+    if (argc > 0)
     {
-        cout << "icsh> ";
-        inputLine = waitForInput();
-        if (inputLine.empty()) continue;
+        string fileloc(argv[0]);
+        processScript(fileloc);
+    }
+    else {
+        string inputLine;
+        while(true)
+        {
+            cout << "icsh> ";
+            inputLine = waitForInput();
+            if (inputLine.empty()) continue;
 
-        if (strcmp(inputLine.c_str(), "!!") == 0) inputLine = prevInput;
-        else prevInput = inputLine;
+            if (strcmp(inputLine.c_str(), "!!") == 0) inputLine = prevInput;
+            else prevInput = inputLine;
 
-        deque<string> argv = getArgumentQueue(inputLine);
-        commandHandler(argv);
+            deque<string> argv = getArgumentQueue(inputLine);
+            commandHandler(argv);
+        }
     }
     return 0;
 }
