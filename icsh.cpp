@@ -79,11 +79,6 @@ void commandHandler(deque<string> commandQueue)
     }
 }
 
-void processScript(char *argv[])
-{
-    
-}
-
 int main(int argc, char *argv[])
 {
     string prevInput;
