@@ -28,7 +28,6 @@ string waitForInput()
         printf("ERROR: %s\n", strerror(errno));
         exit(EXIT_SUCCESS);
     }
-
     return inputLine;
 }
 
