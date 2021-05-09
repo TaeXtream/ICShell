@@ -88,15 +88,19 @@ void processScript(string scriptLoc)
     string line;
     while (getline(infile, line))
     {
-        cout << line << endl;
+        if (line.compare("!!") == 1) line = prevInput;
+        prevInput = line;
+
+        deque<string> argv = getArgumentQueue(line);
+        commandHandler(argv);
     }
 }
 
 int main(int argc, char *argv[])
 {
-    if (argc > 0)
+    if (argc > 1)
     {
-        string fileloc(argv[0]);
+        string fileloc(argv[1]);
         processScript(fileloc);
     }
     else {
@@ -108,7 +112,7 @@ int main(int argc, char *argv[])
             if (inputLine.empty()) continue;
 
             if (strcmp(inputLine.c_str(), "!!") == 0) inputLine = prevInput;
-            else prevInput = inputLine;
+            prevInput = inputLine;
 
             deque<string> argv = getArgumentQueue(inputLine);
             commandHandler(argv);
