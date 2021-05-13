@@ -12,6 +12,7 @@
 #include <deque>
 #include <signal.h>
 #include <fstream>
+#include "exRunner.cpp"
 
 
 using namespace std;
@@ -77,7 +78,7 @@ void commandHandler(deque<string> commandQueue)
     }
     else
     {
-        cout << "Unknown Command!" << endl;
+        runExternalCommand(commandQueue);
         return;
     }
 }
