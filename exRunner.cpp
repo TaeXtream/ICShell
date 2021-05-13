@@ -23,7 +23,7 @@ void runExternalCommand(deque<string> commandList)
   {
     // Reference: https://stackoverflow.com/questions/35247570/execvp-not-working-when-converting-from-vectorstring-to-vectorchar-to-char
     vector<char*> argc;
-    for (auto const& a : commandList)
+    for (auto const &a : commandList)
         argc.emplace_back(const_cast<char*>(a.c_str()));
     argc.push_back(nullptr);
     /* This is the child, so execute the ls */ 
@@ -39,12 +39,3 @@ void runExternalCommand(deque<string> commandList)
   }
 }
 
-
-int main(int argc, char *argv[])
-{
-  deque<string> command;
-  command.push_back("/usr/bin/ls");
-  command.push_back("-l");
-  command.push_back("/");
-  runExternalCommand(command);
-}
