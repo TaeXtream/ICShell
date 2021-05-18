@@ -20,6 +20,7 @@ using namespace std;
 #define ECHOCMD "echo"
 
 string prevInput;
+int exitNumber = 0;
 
 string waitForInput()
 {
@@ -43,22 +44,28 @@ deque<string> getArgumentQueue(string inputLine)
 
 void doEcho(deque<string> commandQueue)
 {
-    for(int i = 0; i < commandQueue.size(); i++)
+    if (strcmp(commandQueue[0].c_str(), "$?") == 0)
     {
-        cout << commandQueue[i] << " ";
+        cout << exitNumber << endl;
     }
-    cout << endl;
+    else{
+        for(int i = 0; i < commandQueue.size(); i++)
+        {
+            cout << commandQueue[i] << " ";
+        }
+        cout << endl;
+    }
     return;
 }
 
-void commandHandler(deque<string> commandQueue)
+int commandHandler(deque<string> commandQueue)
 {
     string command = commandQueue[0];
     if (strcmp(command.c_str(), ECHOCMD) == 0) 
     {
         commandQueue.pop_front();
         doEcho(commandQueue);
-        return;
+        return 0;
     }
     else if (strcmp(command.c_str(), EXITCMD) == 0)
     {
@@ -77,8 +84,7 @@ void commandHandler(deque<string> commandQueue)
     }
     else
     {
-        runExternalCommand(commandQueue);
-        return;
+        return runExternalCommand(commandQueue);;
     }
 }
 
@@ -124,7 +130,7 @@ int main(int argc, char *argv[])
     {
         string fileloc(argv[1]);
         processScript(fileloc);
-        return 0;
+        return exitNumber;
     }
     struct sigaction saSTOP;
     struct sigaction saINT;
@@ -134,5 +140,5 @@ int main(int argc, char *argv[])
     sigaction(SIGINT, &saINT, nullptr);
     
     mainLoop();
-    return 0;
+    return exitNumber;
 }
