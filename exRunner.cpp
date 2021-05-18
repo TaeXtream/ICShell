@@ -33,9 +33,10 @@ void sigSTOPhandler(int signal)
   suspend_process(childID);
 }
 
-void runExternalCommand(deque<string> commandList)
+int runExternalCommand(deque<string> commandList)
 {
   assert(commandList.size() > 0);
+  int exitNum = 0;
   int status;
   pid_t pid;
   if ((pid=fork()) < 0)
@@ -51,7 +52,7 @@ void runExternalCommand(deque<string> commandList)
       argc.emplace_back(const_cast<char*>(a.c_str()));
     argc.push_back(nullptr);
     /* This is the child, so execute the ls */ 
-    execvp(argc[0], argc.data());
+    exitNum = execvp(argc[0], argc.data());
   }
   else
   {
@@ -68,5 +69,6 @@ void runExternalCommand(deque<string> commandList)
       sigaction(SIGTSTP,&exsaSTOP, nullptr);
     }
   }
+  return exitNum;
 }
 
