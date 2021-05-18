@@ -10,7 +10,6 @@
 #include <sstream>
 #include <cerrno>
 #include <deque>
-#include <signal.h>
 #include <fstream>
 #include "exRunner.cpp"
 
@@ -97,27 +96,43 @@ void processScript(string scriptLoc)
     }
 }
 
+void mainSignalHandler(int signal)
+{
+    cout << endl;
+}
+
+void mainLoop()
+{
+    while(true)
+    {
+        if (errno == EINTR) cin.clear();
+        cout <<"icsh> ";
+        string inputLine = waitForInput();
+        if (inputLine.empty()) continue;
+
+        if (strcmp(inputLine.c_str(), "!!") == 0) inputLine = prevInput;
+        prevInput = inputLine;
+
+        deque<string> argv = getArgumentQueue(inputLine);
+        commandHandler(argv);
+    }
+}
+
 int main(int argc, char *argv[])
 {
-    if (argc > 1)
+    if (argc == 2)
     {
         string fileloc(argv[1]);
         processScript(fileloc);
+        return 0;
     }
-    else {
-        string inputLine;
-        while(true)
-        {
-            cout << "icsh> ";
-            inputLine = waitForInput();
-            if (inputLine.empty()) continue;
-
-            if (strcmp(inputLine.c_str(), "!!") == 0) inputLine = prevInput;
-            prevInput = inputLine;
-
-            deque<string> argv = getArgumentQueue(inputLine);
-            commandHandler(argv);
-        }
-    }
+    struct sigaction saSTOP;
+    struct sigaction saINT;
+    saSTOP.sa_handler = &mainSignalHandler;
+    saINT.sa_handler = &mainSignalHandler;
+    sigaction(SIGTSTP, &saSTOP, nullptr);
+    sigaction(SIGINT, &saINT, nullptr);
+    
+    mainLoop();
     return 0;
 }
