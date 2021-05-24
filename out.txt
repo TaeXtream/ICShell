@@ -1,13 +1,28 @@
-total 1028
--rwxrwxrwx 1 taeza007hd taeza007hd 259584 Jun  3  2020 Asteroids.exe
--rwxrwxrwx 1 taeza007hd taeza007hd  35149 May  8 10:58 LICENSE
--rwxrwxrwx 1 taeza007hd taeza007hd     88 May  8 11:56 Makefile
--rwxrwxrwx 1 taeza007hd taeza007hd 209408 Apr 25  2020 Matrix.exe
--rwxrwxrwx 1 taeza007hd taeza007hd    247 May 18 11:39 README.md
--rwxrwxrwx 1 taeza007hd taeza007hd 249856 Apr 26  2020 Racing.exe
--rwxrwxrwx 1 taeza007hd taeza007hd   1725 May 23 10:44 exRunner.cpp
--rwxrwxrwx 1 taeza007hd taeza007hd  93064 May 24 20:12 icsh
--rwxrwxrwx 1 taeza007hd taeza007hd   5184 May 24 20:12 icsh.cpp
--rwxrwxrwx 1 taeza007hd taeza007hd 182880 May 24 20:12 icsh.o
--r-xr-xr-x 1 taeza007hd taeza007hd      0 May 24  2021 out.txt
--rwxrwxrwx 1 taeza007hd taeza007hd     34 May  8 15:37 test.sh
+.
+..
+.git
+.gitignore
+.vscode
+Asteroids.exe
+LICENSE
+Makefile
+Matrix.exe
+README.md
+Racing.exe
+exRunner.cpp
+icsh
+icsh.cpp
+icsh.o
+in.txt
+out.txt
+test.sh
+ 3182676   0% /mnt/wsl
+tools          498930684 233254768 265675916  47% /init
+none             3180388         0   3180388   0% /dev
+none             3182676         8   3182668   1% /run
+none             3182676         0   3182676   0% /run/lock
+none             3182676         0   3182676   0% /run/shm
+none             3182676         0   3182676   0% /run/user
+tmpfs            3182676         0   3182676   0% /sys/fs/cgroup
+C:\            498930684 233254768 265675916  47% /mnt/c
+D:\            976744444 364816740 611927704  38% /mnt/d

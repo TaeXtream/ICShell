@@ -1,10 +1,9 @@
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
-#include <string>
+#include "exRunner.h"
 #include <cassert>
-#include <deque>
 #include <vector>
+#include <iostream>
+#include <sys/types.h>
+#include <unistd.h>
 
 
 

@@ -1,0 +1,4 @@
+echo Test Input From File
+!!
+df
+echo It's Working!!!!
