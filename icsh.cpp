@@ -2,6 +2,7 @@
 //
 
 #include <iostream>
+#include <cstdio>
 #include <cstdlib>
 #include <unistd.h>
 #include <string>
@@ -11,6 +12,8 @@
 #include <cerrno>
 #include <deque>
 #include <fstream>
+#include <algorithm>
+#include <fcntl.h>
 #include "exRunner.cpp"
 
 
@@ -18,6 +21,15 @@ using namespace std;
 
 #define EXITCMD "exit"
 #define ECHOCMD "echo"
+
+//ANSI Color codes
+#define RED   		"\033[0;31m"
+#define YELLOW 		"\033[0;33m"
+#define CYAN 		"\033[0;36m"
+#define GREEN 		"\033[0;32m"
+#define BLUE 		"\033[0;34m"
+#define MAGENTA     "\033[0;35m"
+#define RESET  		"\e[0m" 
 
 string prevInput;
 int exitNumber = 0;
@@ -29,7 +41,7 @@ string waitForInput()
     int len = inputLine.length();
     if (len == -1)
     {
-        printf("ERROR: %s\n", strerror(errno));
+        printf(RED "ERROR: %s\n" RESET, strerror(errno));
         exit(EXIT_SUCCESS);
     }
     return inputLine;
@@ -42,7 +54,7 @@ deque<string> getArgumentQueue(string inputLine)
     return argv;
 }
 
-void doEcho(deque<string> commandQueue)
+int doEcho(deque<string> commandQueue)
 {
     if (strcmp(commandQueue[0].c_str(), "$?") == 0)
     {
@@ -55,7 +67,7 @@ void doEcho(deque<string> commandQueue)
         }
         cout << endl;
     }
-    return;
+    return 0;
 }
 
 int commandHandler(deque<string> commandQueue)
@@ -64,8 +76,8 @@ int commandHandler(deque<string> commandQueue)
     if (strcmp(command.c_str(), ECHOCMD) == 0) 
     {
         commandQueue.pop_front();
-        doEcho(commandQueue);
-        return 0;
+        exitNumber = doEcho(commandQueue);
+        return exitNumber;
     }
     else if (strcmp(command.c_str(), EXITCMD) == 0)
     {
@@ -84,7 +96,7 @@ int commandHandler(deque<string> commandQueue)
     }
     else
     {
-        return runExternalCommand(commandQueue);;
+        return runExternalCommand(commandQueue);
     }
 }
 
@@ -98,7 +110,7 @@ void processScript(string scriptLoc)
         prevInput = line;
 
         deque<string> argv = getArgumentQueue(line);
-        commandHandler(argv);
+        exitNumber = commandHandler(argv);
     }
 }
 
@@ -107,12 +119,46 @@ void mainSignalHandler(int signal)
     cout << endl;
 }
 
+// References: http://www.cplusplus.com/forum/general/94879/
+void outputRedirection(deque<string> commandQueue)
+{
+    string file = commandQueue.back();
+    commandQueue.pop_back();
+    auto it = find(commandQueue.begin(), commandQueue.end(), ">");
+    int idx = distance(commandQueue.begin(), it);
+    commandQueue.erase(commandQueue.begin() + idx);
+    int fd = open(file.c_str(), O_WRONLY | O_CREAT);
+    if (fd < 0)
+    {
+        cout << RED << "Cannot Open or Create " << YELLOW << file << RESET << endl;
+        return;
+    }
+    int defout = dup(1);
+    dup2(fd, 1);
+    exitNumber = commandHandler(commandQueue);
+    dup2(defout, 1);
+    close(fd);
+    close(defout);
+}
+
+void inputRedirection(deque<string> commandQueue)
+{
+
+}
+
+void inAndOutRedirection(deque<string> commandQueue)
+{
+
+}
+
+
+
 void mainLoop()
 {
     while(true)
     {
         if (errno == EINTR) cin.clear();
-        cout <<"icsh> ";
+        cout << CYAN <<"icsh> " << RESET;
         string inputLine = waitForInput();
         if (inputLine.empty()) continue;
 
@@ -120,12 +166,31 @@ void mainLoop()
         prevInput = inputLine;
 
         deque<string> argv = getArgumentQueue(inputLine);
-        commandHandler(argv);
+        bool reOut = find(argv.begin(), argv.end(), ">") != argv.end();
+        bool reIn = find(argv.begin(), argv.end(), "<") != argv.end();
+        if (reOut && !reIn)
+        {
+            outputRedirection(argv);
+        }
+        else if (reIn && !reOut)
+        {
+            inputRedirection(argv);
+        }
+        else
+        {
+            commandHandler(argv);
+        }
     }
 }
 
 int main(int argc, char *argv[])
 {
+    cout << RED <<"  _____ _____    _____ _    _      _ _ " << endl;
+    cout << YELLOW <<" |_   _/ ____|  / ____| |  | |    | | |" << endl;
+    cout << GREEN <<"   | || |      | (___ | |__| | ___| | |" << endl;
+    cout << CYAN <<"   | || |       \\___ \\|  __  |/ _ \\ | |" << endl;
+    cout << BLUE <<"  _| || |____   ____) | |  | |  __/ | |" << endl;
+    cout << MAGENTA <<" |_____\\_____| |_____/|_|  |_|\\___|_|_|" << RESET << endl;
     if (argc == 2)
     {
         string fileloc(argv[1]);

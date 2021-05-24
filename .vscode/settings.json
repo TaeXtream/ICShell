@@ -9,6 +9,8 @@
         "*.tcc": "cpp",
         "vector": "cpp",
         "functional": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp"
     }
 }

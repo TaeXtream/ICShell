@@ -11,14 +11,26 @@
 using namespace std;
 
 pid_t childID;
-int run = 1;
+static int run = 1;
+static int paused = 0;
 
 
 void suspend_process(pid_t pid)
 {
-  cout << endl;
-  printf("pid %d suspend\n",pid);
-  kill(pid, SIGTSTP);
+    if (pid == 0)
+        return;
+    printf("pid %d suspended\n",pid);
+    paused = 1;
+    kill(pid, SIGSTOP);
+}
+
+void resume_process(pid_t pid)
+{
+    if (pid == 0)
+        return;
+    printf("pid %d resumed\n",pid);
+    paused = 0;
+    kill(pid, SIGCONT);
 }
 
 void sigINThandler(int signal)
@@ -26,11 +38,15 @@ void sigINThandler(int signal)
   cout << endl;
   printf("kill pid %d\n",childID);
   run = 0;
+  kill(childID, SIGKILL);
 }
 
 void sigSTOPhandler(int signal)
 {
-  suspend_process(childID);
+  if(paused)
+    resume_process(childID);
+  else
+    suspend_process(childID);
 }
 
 int runExternalCommand(deque<string> commandList)
