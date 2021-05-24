@@ -6,24 +6,21 @@
 #include <unistd.h>
 
 
-
-using namespace std;
-
 pid_t childID;
 static int run = 1;
 static int paused = 0;
 
 
-void suspend_process(pid_t pid)
+void pausedProcess(pid_t pid)
 {
     if (pid == 0)
         return;
-    printf("pid %d suspended\n",pid);
+    printf("pid %d paused\n",pid);
     paused = 1;
     kill(pid, SIGSTOP);
 }
 
-void resume_process(pid_t pid)
+void resumeProcess(pid_t pid)
 {
     if (pid == 0)
         return;
@@ -43,9 +40,9 @@ void sigINThandler(int signal)
 void sigSTOPhandler(int signal)
 {
   if(paused)
-    resume_process(childID);
+    resumeProcess(childID);
   else
-    suspend_process(childID);
+    pausedProcess(childID);
 }
 
 int runExternalCommand(deque<string> commandList)
@@ -56,7 +53,7 @@ int runExternalCommand(deque<string> commandList)
   pid_t pid;
   if ((pid=fork()) < 0)
   {
-    perror ("Fork failed");
+    perror("Fork failed");
     exit(errno);
   }
   if (pid == 0)
