@@ -14,7 +14,7 @@
 #include <fstream>
 #include <algorithm>
 #include <fcntl.h>
-#include "exRunner.cpp"
+#include "exRunner.h"
 
 
 using namespace std;
@@ -122,15 +122,15 @@ void mainSignalHandler(int signal)
 // References: http://www.cplusplus.com/forum/general/94879/
 void outputRedirection(deque<string> commandQueue)
 {
-    string file = commandQueue.back();
+    string fileName = commandQueue.back();
     commandQueue.pop_back();
     auto it = find(commandQueue.begin(), commandQueue.end(), ">");
     int idx = distance(commandQueue.begin(), it);
     commandQueue.erase(commandQueue.begin() + idx);
-    int fd = open(file.c_str(), O_WRONLY | O_CREAT);
+    int fd = open(fileName.c_str(), O_WRONLY | O_CREAT);
     if (fd < 0)
     {
-        cout << RED << "Cannot Open or Create " << YELLOW << file << RESET << endl;
+        cout << RED << "Cannot Open or Create " << YELLOW << fileName << RESET << endl;
         return;
     }
     int defout = dup(1);
@@ -139,10 +139,23 @@ void outputRedirection(deque<string> commandQueue)
     dup2(defout, 1);
     close(fd);
     close(defout);
+    return;
 }
 
 void inputRedirection(deque<string> commandQueue)
 {
+    string fileName = commandQueue.back();
+    ifstream infile(fileName);
+    string line;
+    while (getline(infile, line))
+    {
+        if (line.compare("!!") == 1) line = prevInput;
+        prevInput = line;
+
+        deque<string> argv = getArgumentQueue(line);
+        exitNumber = commandHandler(argv);
+    }
+    return;
 
 }
 
@@ -171,10 +184,12 @@ void mainLoop()
         if (reOut && !reIn)
         {
             outputRedirection(argv);
+            continue;
         }
         else if (reIn && !reOut)
         {
             inputRedirection(argv);
+            continue;
         }
         else
         {
