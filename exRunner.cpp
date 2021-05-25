@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sys/types.h>
 #include <unistd.h>
+#include "signalProcess.h"
 
 
 pid_t childID;
@@ -11,38 +12,26 @@ static int run = 1;
 static int paused = 0;
 
 
-void pausedProcess(pid_t pid)
-{
-    if (pid == 0)
-        return;
-    printf("pid %d paused\n",pid);
-    paused = 1;
-    kill(pid, SIGSTOP);
-}
 
-void resumeProcess(pid_t pid)
+void sigHandler(int signal)
 {
-    if (pid == 0)
-        return;
-    printf("pid %d resumed\n",pid);
-    paused = 0;
-    kill(pid, SIGCONT);
-}
-
-void sigINThandler(int signal)
-{
-  cout << endl;
-  printf("kill pid %d\n",childID);
-  run = 0;
-  kill(childID, SIGKILL);
-}
-
-void sigSTOPhandler(int signal)
-{
-  if(paused)
-    resumeProcess(childID);
-  else
-    pausedProcess(childID);
+  switch (signal)
+  {
+  case SIGTSTP:
+    if(paused){
+      resumeProcess(childID);
+      paused = 0;
+    }
+    else{
+      pausedProcess(childID);
+      paused = 1;
+    }
+    break;
+  case SIGINT:
+    killProcess(childID);
+  default:
+    break;
+  }
 }
 
 int runExternalCommand(deque<string> commandList)
@@ -70,8 +59,8 @@ int runExternalCommand(deque<string> commandList)
   {
     struct sigaction exsaSTOP;
     struct sigaction exsaINT;
-    exsaSTOP.sa_handler = &sigSTOPhandler;
-    exsaINT.sa_handler = &sigINThandler;
+    exsaSTOP.sa_handler = &sigHandler;
+    exsaINT.sa_handler = &sigHandler;
 
     childID = pid;
 

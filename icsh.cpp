@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <fcntl.h>
 #include "exRunner.h"
+#include "signalProcess.h"
 
 
 using namespace std;
@@ -25,8 +26,8 @@ using namespace std;
 //ANSI Color codes
 #define RED   		"\033[0;31m"
 #define YELLOW 		"\033[0;33m"
-#define CYAN 		"\033[0;36m"
 #define GREEN 		"\033[0;32m"
+#define CYAN 		"\033[0;36m"
 #define BLUE 		"\033[0;34m"
 #define MAGENTA     "\033[0;35m"
 #define RESET  		"\e[0m" 
@@ -114,10 +115,6 @@ void processScript(string scriptLoc)
     }
 }
 
-void mainSignalHandler(int signal)
-{
-    cout << endl;
-}
 
 // References: http://www.cplusplus.com/forum/general/94879/
 void outputRedirection(deque<string> commandQueue)
