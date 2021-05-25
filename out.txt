@@ -1,28 +1,15 @@
-.
-..
-.git
-.gitignore
-.vscode
-Asteroids.exe
-LICENSE
-Makefile
-Matrix.exe
-README.md
-Racing.exe
-exRunner.cpp
-icsh
-icsh.cpp
-icsh.o
-in.txt
-out.txt
-test.sh
- 3182676   0% /mnt/wsl
-tools          498930684 233254768 265675916  47% /init
+Test Input From File 
+Test Input From File 
+Filesystem     1K-blocks      Used Available Use% Mounted on
+/dev/sdb       263174212   4293188 245442868   2% /
+tmpfs            3182676         0   3182676   0% /mnt/wsl
+tools          498930684 233674540 265256144  47% /init
 none             3180388         0   3180388   0% /dev
-none             3182676         8   3182668   1% /run
+none             3182676        16   3182660   1% /run
 none             3182676         0   3182676   0% /run/lock
 none             3182676         0   3182676   0% /run/shm
 none             3182676         0   3182676   0% /run/user
 tmpfs            3182676         0   3182676   0% /sys/fs/cgroup
-C:\            498930684 233254768 265675916  47% /mnt/c
+C:\            498930684 233674540 265256144  47% /mnt/c
 D:\            976744444 364816740 611927704  38% /mnt/d
+It's Working!!!! 
