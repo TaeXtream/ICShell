@@ -42,7 +42,7 @@ string waitForInput()
     if (len == -1)
     {
         printf(RED "ERROR: %s\n" RESET, strerror(errno));
-        exit(EXIT_SUCCESS);
+        exit(EXIT_FAILURE);
     }
     return inputLine;
 }
@@ -122,10 +122,10 @@ void mainSignalHandler(int signal)
 // References: http://www.cplusplus.com/forum/general/94879/
 void outputRedirection(deque<string> commandQueue)
 {
-    string fileName = commandQueue.back();
-    commandQueue.pop_back();
     auto it = find(commandQueue.begin(), commandQueue.end(), ">");
     int idx = distance(commandQueue.begin(), it);
+    string fileName = commandQueue[idx+1];
+    commandQueue.erase(commandQueue.begin() + idx + 1);
     commandQueue.erase(commandQueue.begin() + idx);
     int fd = open(fileName.c_str(), O_WRONLY | O_CREAT);
     if (fd < 0)
@@ -161,6 +161,38 @@ void inputRedirection(deque<string> commandQueue)
 
 void inAndOutRedirection(deque<string> commandQueue)
 {
+    auto it = find(commandQueue.begin(), commandQueue.end(), ">");
+    int outidx = distance(commandQueue.begin(), it);
+    string outFileName = commandQueue[outidx+1];
+
+    it = find(commandQueue.begin(), commandQueue.end(), "<");
+    int inidx = distance(commandQueue.begin(), it);
+    string inFileName = commandQueue[inidx+1];
+
+    int fd = open(outFileName.c_str(), O_WRONLY | O_CREAT);
+    if (fd < 0)
+    {
+        cout << RED << "Cannot Open or Create " << YELLOW << outFileName << RESET << endl;
+        return;
+    }
+    int defout = dup(1);
+    dup2(fd, 1);
+    
+    ifstream infile(inFileName);
+    string line;
+    while (getline(infile, line))
+    {
+        if (line.compare("!!") == 1) line = prevInput;
+        prevInput = line;
+
+        deque<string> argv = getArgumentQueue(line);
+        exitNumber = commandHandler(argv);
+    }
+
+    dup2(defout, 1);
+    close(fd);
+    close(defout);
+    return;
 
 }
 
@@ -181,7 +213,12 @@ void mainLoop()
         deque<string> argv = getArgumentQueue(inputLine);
         bool reOut = find(argv.begin(), argv.end(), ">") != argv.end();
         bool reIn = find(argv.begin(), argv.end(), "<") != argv.end();
-        if (reOut && !reIn)
+        if (reIn && reOut)
+        {
+            inAndOutRedirection(argv);
+            continue;
+        }
+        else if (reOut && !reIn)
         {
             outputRedirection(argv);
             continue;
@@ -200,12 +237,12 @@ void mainLoop()
 
 int main(int argc, char *argv[])
 {
-    cout << RED <<"  _____ _____    _____ _    _      _ _ " << endl;
-    cout << YELLOW <<" |_   _/ ____|  / ____| |  | |    | | |" << endl;
-    cout << GREEN <<"   | || |      | (___ | |__| | ___| | |" << endl;
-    cout << CYAN <<"   | || |       \\___ \\|  __  |/ _ \\ | |" << endl;
-    cout << BLUE <<"  _| || |____   ____) | |  | |  __/ | |" << endl;
-    cout << MAGENTA <<" |_____\\_____| |_____/|_|  |_|\\___|_|_|" << RESET << endl;
+    cout << RED << "  _____ _____    _____ _    _      _ _ " << endl;
+    cout << YELLOW << " |_   _/ ____|  / ____| |  | |    | | |" << endl;
+    cout << GREEN << "   | || |      | (___ | |__| | ___| | |" << endl;
+    cout << CYAN << "   | || |       \\___ \\|  __  |/ _ \\ | |" << endl;
+    cout << BLUE << "  _| || |____   ____) | |  | |  __/ | |" << endl;
+    cout << MAGENTA << " |_____\\_____| |_____/|_|  |_|\\___|_|_|" << RESET << endl;
     if (argc == 2)
     {
         string fileloc(argv[1]);
