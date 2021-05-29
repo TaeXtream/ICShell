@@ -1,8 +1,9 @@
 #include "signalProcess.h"
-
 #include <signal.h>
 #include <iostream>
 #include <unistd.h>
+#include <stddef.h>
+
 
 using namespace std;
 
