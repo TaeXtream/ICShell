@@ -14,7 +14,7 @@
 #include <fstream>
 #include <algorithm>
 #include <fcntl.h>
-#include "exRunner.h"
+#include "processHandler.h"
 #include "signalProcess.h"
 
 
@@ -97,7 +97,7 @@ int commandHandler(deque<string> commandQueue)
     }
     else
     {
-        return runExternalCommand(commandQueue);
+        return processHandler(commandQueue);
     }
 }
 
