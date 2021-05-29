@@ -2,18 +2,21 @@
 
 #include <deque>
 #include <string>
-#include <sys/types.h>
 #include <sys/wait.h>
 
 using namespace std;
 
 
-struct ProcessNode{
-    pid_t data;
+struct ProcessNode
+{
+    pid_t pid;
     string state;
     string command;
 };
 
-static deque<ProcessNode> processList;
+extern deque<ProcessNode> processList;
+extern pid_t shellID;
+extern pid_t childID;
 
 int processHandler(deque<string> commandQueue);
+void deleteProcessfromList(pid_t id);
