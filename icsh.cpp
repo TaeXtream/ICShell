@@ -15,7 +15,6 @@
 #include <algorithm>
 #include <fcntl.h>
 #include "processHandler.h"
-#include "signalProcess.h"
 
 
 using namespace std;
@@ -193,7 +192,10 @@ void inAndOutRedirection(deque<string> commandQueue)
 
 }
 
-
+void mainSignalHandler(int signal)
+{
+    cout << endl;
+}
 
 void mainLoop()
 {
@@ -252,6 +254,10 @@ int main(int argc, char *argv[])
     saINT.sa_handler = &mainSignalHandler;
     sigaction(SIGTSTP, &saSTOP, nullptr);
     sigaction(SIGINT, &saINT, nullptr);
+
+    shellID = getpid();
+    setpgid(shellID, shellID);
+    tcsetpgrp(0, shellID);
     
     mainLoop();
     return exitNumber;

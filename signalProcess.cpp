@@ -1,4 +1,5 @@
 #include "signalProcess.h"
+#include "processHandler.h"
 #include <signal.h>
 #include <iostream>
 #include <unistd.h>
@@ -7,10 +8,7 @@
 
 using namespace std;
 
-void mainSignalHandler(int signal)
-{
-    cout << endl;
-}
+bool terminalState = true;
 
 void pausedProcess(pid_t pid)
 {
@@ -37,3 +35,19 @@ void killProcess(pid_t pid)
   kill(pid, SIGKILL);
 }
 
+void sigchildHandler(int signal){
+    pid_t pid;
+    for (int i = 0; i < processList.size(); i++)
+    {
+        ProcessNode pnode = processList[i];
+        if ((pid = waitpid(pnode.pid,0,WNOHANG)) > 0){
+            cout << "Process " << pnode.pid <<" has finished executing" << endl; 
+            processList.erase(processList.begin()+i);
+            break;
+        }
+    }
+    tcsetpgrp(STDIN_FILENO, shellID);
+    tcsetpgrp(STDOUT_FILENO, shellID);
+    tcsetpgrp(STDERR_FILENO, shellID);
+    childID = 0;
+}
