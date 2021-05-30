@@ -146,7 +146,7 @@ int movingProcessFGandBG(pid_t pid, bool toFG)
   int processidx = searchProcessinList(pid);
   if(processidx < 0)
   {
-    cout << "no process with id " << pid << endl;
+    cout << "No process with id " << pid << endl;
     return 0;
   }
   if (toFG)
