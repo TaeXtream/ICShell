@@ -21,6 +21,7 @@ using namespace std;
 
 #define EXITCMD "exit"
 #define ECHOCMD "echo"
+#define GAMECMD "game"
 
 //ANSI Color codes
 #define RED   		"\033[0;31m"
@@ -93,6 +94,37 @@ int commandHandler(deque<string> commandQueue)
         }
         cout << "Bye" << endl;
         exit(0);
+    }
+    else if (strcmp(command.c_str(), GAMECMD) == 0)
+    {
+        if (commandQueue.size() != 2)
+        {
+            cout << RED << "Bad Command!" << RESET << endl;
+            return exitNumber;
+        }
+        string gameName = commandQueue[1];
+        if (gameName == "Racing")
+        {
+            commandQueue.clear();
+            commandQueue.push_back("./Games/Racing.exe");
+        }
+        else if (gameName == "FPS")
+        {
+            commandQueue.clear();
+            commandQueue.push_back("./Games/FPS.exe");
+        }
+        else if (gameName == "Asteroids.exe")
+        {
+            commandQueue.clear();
+            commandQueue.push_back("./Games/Asteroids.exe");
+        }
+        else if (gameName == "help")
+        {
+            cout << GREEN <<"Existing Game: Asteroids, FPS, Racing" << endl;
+            cout << YELLOW << "Command Format: " << CYAN << "game <Game Name>" << RESET << endl;
+            return 0;
+        }
+        return processHandler(commandQueue);
     }
     else
     {
