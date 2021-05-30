@@ -247,6 +247,12 @@ void mainLoop()
 {
     while(true)
     {
+        if (errno == EINTR)
+        {
+            cin.clear();
+            cout.clear();
+            fflush(stderr);   
+        }
         cout << CYAN <<"icsh> " << RESET;
         string inputLine = waitForInput();
         if (inputLine.empty()) continue;
