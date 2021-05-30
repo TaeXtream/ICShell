@@ -113,7 +113,7 @@ int commandHandler(deque<string> commandQueue)
             commandQueue.clear();
             commandQueue.push_back("./Games/FPS.exe");
         }
-        else if (gameName == "Asteroids.exe")
+        else if (gameName == "Asteroids")
         {
             commandQueue.clear();
             commandQueue.push_back("./Games/Asteroids.exe");
