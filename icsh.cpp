@@ -21,7 +21,6 @@ using namespace std;
 
 #define EXITCMD "exit"
 #define ECHOCMD "echo"
-#define GAMECMD "game"
 
 //ANSI Color codes
 #define RED   		"\033[0;31m"
