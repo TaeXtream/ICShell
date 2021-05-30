@@ -22,6 +22,11 @@ using namespace std;
 #define EXITCMD "exit"
 #define ECHOCMD "echo"
 
+
+#define GAMECMD "game"
+#define MATRIXCMD "matrix"
+
+
 //ANSI Color codes
 #define RED   		"\033[0;31m"
 #define YELLOW 		"\033[0;33m"
@@ -77,7 +82,7 @@ int commandHandler(deque<string> commandQueue)
     {
         commandQueue.pop_front();
         exitNumber = doEcho(commandQueue);
-        return exitNumber;
+        return 0;
     }
     else if (strcmp(command.c_str(), EXITCMD) == 0)
     {
@@ -94,6 +99,53 @@ int commandHandler(deque<string> commandQueue)
         cout << "Bye" << endl;
         exit(0);
     }
+
+
+    else if (strcmp(command.c_str(), GAMECMD) == 0)
+    {
+        if (commandQueue.size() != 2)
+        {
+            cout << RED << "Bad Command!" << RESET << endl;
+            return 0;
+        }
+        string gameName = commandQueue[1];
+        if (gameName == "Racing")
+        {
+            commandQueue.clear();
+            commandQueue.push_back("./Games/Racing.exe");
+        }
+        else if (gameName == "FPS")
+        {
+            commandQueue.clear();
+            commandQueue.push_back("./Games/FPS.exe");
+        }
+        else if (gameName == "Asteroids")
+        {
+            commandQueue.clear();
+            commandQueue.push_back("./Games/Asteroids.exe");
+        }
+        else if (gameName == "help")
+        {
+            cout << GREEN <<"Existing Game: Asteroids, FPS, Racing" << endl;
+            cout << YELLOW << "Command Format: " << CYAN << "game <Game Name>" << RESET << endl;
+            return 0;
+        }
+        else
+        {
+            cout << RED << "Game does not exist!!!!" << RESET << endl;
+            return 0;
+        }
+        cout << GREEN << "Start the " << BLUE << gameName << GREEN " Game!!!!" << RESET << endl;
+        return processHandler(commandQueue);
+    }
+    else if (strcmp(command.c_str(), MATRIXCMD) == 0)
+    {
+        commandQueue.clear();
+        commandQueue.push_back("./Games/Matrix.exe");
+        cout << GREEN << "Enter the Matrix!!!!" << RESET << endl;
+        return processHandler(commandQueue);
+    }
+
     else
     {
         return processHandler(commandQueue);
