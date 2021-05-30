@@ -4,14 +4,16 @@ Linux Shell written in C++ for ICCS227 project.
 
 ## Features:
 
-```echo``` command for printing text to screen.
+#### Basic Stuff:
+
+`echo <text>` command for printing text to screen.
 
 ```shell
 icsh> echo Hello To the Shell
 Hello To the Shell
 ```
 
-`exit` command for exit the shell.
+`exit <exitcode>` command for exit the shell.
 
 ```shell
 icsh> exit 1
@@ -27,7 +29,7 @@ icsh> !!
 hello world
 ```
 
-Script Mode:
+#### Script Mode:
 
 Shell can read file that come from the argument for input.
 
@@ -48,7 +50,7 @@ world
 Bye
 ```
 
-Run Other Basic Linux Command:
+#### Run Other Basic Linux Command:
 
 Shell is supporting external Linux command using Linux system call like `fork()`, `execvp()`and etc.
 
@@ -89,7 +91,7 @@ F S   UID   PID  PPID  C PRI  NI ADDR SZ WCHAN  TTY          TIME CMD
 0 R  1000  3689  3687  0  80   0 -  2634 -      pts/0    00:00:00 ps
 ```
 
-Signal Handler:
+#### Signal Handler:
 
 Shell is handling Ctrl-Z and Ctrl-C signals for using with shell process.
 
@@ -110,7 +112,7 @@ icsh> exit
 Bye
 ```
 
-I/O redirection:
+#### I/O redirection:
 
 You can redirect out put and input of the shell by using > and <.
 
@@ -120,7 +122,55 @@ You can redirect out put and input of the shell by using > and <.
 
 `< input.txt > output.txt` Redirect shell to take input from input.txt and write shell output to output.txt.
 
+#### Background jobs and job control:
 
+I hope this feature work well~
+
+You can control shell jobs.
+
+`jobs` command for looking at background process list.
+
+Use `<process command> &` to run process in background.
+
+```shell
+icsh> sleep 100 &
+icsh> sleep 200 &
+icsh> jobs
+[0] 3732 Running sleep 100
+[1] 3733 Running sleep 200
+```
+
+`fg %<pid>` Command for bring background process to foreground.
+
+```shell
+icsh> sleep 10s &
+icsh> jobs
+[0] 4554 Running sleep 10s
+icsh> fg %4554
+sleep 10s
+```
+
+`<bg %<pid>` Command for bring foreground process to background.
+
+```shell
+icsh> sleep 15
+^Z
+pid 4752 paused
+icsh> jobs
+[0] 4752 Paused sleep 15
+icsh> bg %4752
+icsh> Process 4752 has finished executing
+```
+
+
+
+## Extra Feature:
+
+`game <Game Name>` Command to play some game might not work in your machine but it work in mine.
+
+`matrix` Command to enter the Matrix.
+
+This
 
 References:
 
