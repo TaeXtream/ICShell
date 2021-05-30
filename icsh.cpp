@@ -268,18 +268,18 @@ void mainLoop()
 
 int main(int argc, char *argv[])
 {
-    cout << RED << "  _____ _____    _____ _    _      _ _ " << endl;
-    cout << YELLOW << " |_   _/ ____|  / ____| |  | |    | | |" << endl;
-    cout << GREEN << "   | || |      | (___ | |__| | ___| | |" << endl;
-    cout << CYAN << "   | || |       \\___ \\|  __  |/ _ \\ | |" << endl;
-    cout << BLUE << "  _| || |____   ____) | |  | |  __/ | |" << endl;
-    cout << MAGENTA << " |_____\\_____| |_____/|_|  |_|\\___|_|_|" << RESET << endl;
     if (argc == 2)
     {
         string fileloc(argv[1]);
         processScript(fileloc);
         return exitNumber;
     }
+    cout << RED << "  _____ _____    _____ _    _      _ _ " << endl;
+    cout << YELLOW << " |_   _/ ____|  / ____| |  | |    | | |" << endl;
+    cout << GREEN << "   | || |      | (___ | |__| | ___| | |" << endl;
+    cout << CYAN << "   | || |       \\___ \\|  __  |/ _ \\ | |" << endl;
+    cout << BLUE << "  _| || |____   ____) | |  | |  __/ | |" << endl;
+    cout << MAGENTA << " |_____\\_____| |_____/|_|  |_|\\___|_|_|" << RESET << endl;
     struct sigaction saSTOP;
     struct sigaction saINT;
     saSTOP.sa_handler = &mainSignalHandler;
