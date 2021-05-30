@@ -15,8 +15,6 @@
 #include <iterator>
 
 
-int paused = 0;
-int run = 1;
 deque<ProcessNode> processList;
 pid_t shellID;
 pid_t childID;
@@ -74,20 +72,36 @@ void sigHandler(int signal)
   switch (signal)
   {
   case SIGTSTP:
-    if(paused)
+    cin.clear();
+    tcsetpgrp(STDIN_FILENO,shellID);
+    tcsetpgrp(STDOUT_FILENO,shellID);
+    tcsetpgrp(STDERR_FILENO,shellID);
+    if(terminalState)
     {
-      resumeProcess(childID);
-      updateProcessStatusInList(childID, "Running");
-      paused = 0;
+      if (childID)
+      {
+        resumeProcess(childID);
+        updateProcessStatusInList(childID, "Running");
+        terminalState = 0;
+      }
     }
     else
     {
-      pausedProcess(childID);
-      updateProcessStatusInList(childID, "Paused");
-      paused = 1;
+      if (childID)
+      {
+        pausedProcess(childID);
+        updateProcessStatusInList(childID, "Paused");
+        terminalState = 1;
+      }
     }
     break;
   case SIGINT:
+    cin.clear();
+    cout.clear();
+    fflush(stderr);
+    tcsetpgrp(STDIN_FILENO,shellID);
+    tcsetpgrp(STDOUT_FILENO,shellID);
+    tcsetpgrp(STDERR_FILENO,shellID);
     killProcess(childID);
     deleteProcessfromList(childID);
   default:
@@ -197,7 +211,6 @@ int processHandler(deque<string> commandQueue)
     }
 
     pid_t pid = fork();
-    int status;
     if (pid < 0)
     {
       perror("Fork failed");
@@ -240,6 +253,6 @@ int processHandler(deque<string> commandQueue)
         parentProcessHandler(pid);
         terminalState = true;
       }
-    } while (pid == 0);
+    }
     return exitNum;
 }
