@@ -15,4 +15,4 @@ void resumeProcess(pid_t pid);
 
 void killProcess(int signal);
 
-void sigchildHandler(int signal);
+void sigChildHandler(int signal);
