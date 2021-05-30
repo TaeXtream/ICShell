@@ -2,6 +2,8 @@
 
 Linux Shell written in C++ for ICCS227 project.
 
+Compile by using `make` and Makefile.
+
 ## Features:
 
 #### Basic Stuff:
