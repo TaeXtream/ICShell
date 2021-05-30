@@ -35,7 +35,7 @@ void killProcess(pid_t pid)
   kill(pid, SIGKILL);
 }
 
-void sigchildHandler(int signal){
+void sigChildHandler(int signal){
     pid_t pid;
     for (int i = 0; i < processList.size(); i++)
     {

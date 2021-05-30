@@ -39,24 +39,51 @@ void deleteProcessfromList(pid_t id)
     if (it->pid == id)
     {
       it = processList.erase(it);
-      --it;
+      return;
     }
   }
   
 }
 
+void updateProcessStatusInList(pid_t id, string status)
+{
+  for(auto it = processList.begin(); it != processList.end();++it)
+  {
+    if (it->pid == id)
+    {
+      it->state = status;
+      return;
+    }
+  }
+}
+
+int searchProcessinList(pid_t pid)
+{
+  for (int i = 0; i < processList.size(); i++)
+  {
+    if (processList[i].pid == pid)
+    {
+      return i;
+    }
+  }
+  return -1;
+}
 
 void sigHandler(int signal)
 {
   switch (signal)
   {
   case SIGTSTP:
-    if(paused){
+    if(paused)
+    {
       resumeProcess(childID);
+      updateProcessStatusInList(childID, "Running");
       paused = 0;
     }
-    else{
+    else
+    {
       pausedProcess(childID);
+      updateProcessStatusInList(childID, "Paused");
       paused = 1;
     }
     break;
@@ -68,17 +95,19 @@ void sigHandler(int signal)
   }
 }
 
-void bgParentHandler(){
+void bgProcessHandler()
+{
     signal(SIGTTOU, SIG_IGN);
     struct sigaction bgProcessSigHandler;
     sigemptyset(&bgProcessSigHandler.sa_mask);
-    bgProcessSigHandler.sa_handler = sigchildHandler;
+    bgProcessSigHandler.sa_handler = sigChildHandler;
     bgProcessSigHandler.sa_flags = SA_RESTART | SA_NOCLDSTOP;
     if (sigaction(SIGCHLD,&bgProcessSigHandler, NULL) == -1)
         exit(1);
 }
 
-void parentProcessHandler(pid_t pid){
+void parentProcessHandler(pid_t pid)
+{
     int status;
     struct sigaction exsaSTOP;
     struct sigaction exsaINT;
@@ -98,6 +127,44 @@ void parentProcessHandler(pid_t pid){
     }
 }
 
+int movingProcessFGandBG(pid_t pid, bool toFG)
+{
+  int processidx = searchProcessinList(pid);
+  if(processidx < 0)
+  {
+    cout << "no process with id " << pid << endl;
+    return 0;
+  }
+  if (toFG)
+  {
+    terminalState = false;
+    cout << processList[processidx].command << endl;
+    parentProcessHandler(pid);
+    terminalState = true;
+  }
+  else
+  {
+    if (!childID)
+    {
+      cout << "No Child Process Running" << endl;
+      return 0;
+    }
+    if (pid != childID)
+    {
+      cout << "The Process is currently running in the background" << endl;
+    }
+    if (terminalState)
+    {
+      setpgid(childID,childID);
+      kill(childID, SIGCONT);
+      childID = 0;
+      bgProcessHandler();
+    }
+  }
+  return 0;
+
+}
+
 int processHandler(deque<string> commandQueue)
 {
     assert(commandQueue.size() > 0);
@@ -107,6 +174,20 @@ int processHandler(deque<string> commandQueue)
     {
       printProcessList(processList);
       return exitNum;
+    }
+    else if (commandQueue[0] == "fg")
+    {
+      string argv = commandQueue[1];
+      argv.erase(argv.begin());
+      int id = atoi(argv.c_str());
+      return movingProcessFGandBG((pid_t) id, true);
+    }
+    else if (commandQueue[0] == "bg")
+    {
+      string argv = commandQueue[1];
+      argv.erase(argv.begin());
+      int id = atoi(argv.c_str());
+      return movingProcessFGandBG((pid_t) id, false);
     }
 
     if (commandQueue.back() == "&")
@@ -151,7 +232,7 @@ int processHandler(deque<string> commandQueue)
       if (toBackground)
       {
         setpgid(pid,pid);
-        bgParentHandler();
+        bgProcessHandler();
       }
       else
       {
