@@ -152,7 +152,7 @@ icsh> fg %4554
 sleep 10s
 ```
 
-`<bg %<pid>` Command for bring foreground process to background.
+`bg %<pid>` Command for bring foreground process to background.
 
 ```shell
 icsh> sleep 15
@@ -161,7 +161,7 @@ pid 4752 paused
 icsh> jobs
 [0] 4752 Paused sleep 15
 icsh> bg %4752
-icsh> Process 4752 has finished executing
+icsh>
 ```
 
 
@@ -172,7 +172,13 @@ icsh> Process 4752 has finished executing
 
 `matrix` Command to enter the Matrix.
 
-This
+
+
+Collaborator: 
+
+Some Ideas and Logics in this project are from my friends.
+
+Nakarin, Thomas, Pariwat, Naran and Maylin.
 
 References:
 
